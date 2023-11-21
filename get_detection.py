@@ -66,6 +66,5 @@ def predict():
             "angle_offset": angle_offset
         }
         predictions.append(detections)
-    print(predictions)
     return predictions
 predict()
