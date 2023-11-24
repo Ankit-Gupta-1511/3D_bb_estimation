@@ -4,11 +4,19 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import lib
 import numpy as np
+import os 
+from visualize import render_predictions
 
-image_path = 'path_to_image/training/image_2/000024.png'
-yolo_weight_path = 'path_to_weights_config/weights_config/yolov4.weights'
-coco_classes = 'path_to_weights_config/weights_config/coco_classes.txt'
-weight_path_3d = 'path_to_weights_config/weights_config/weights.hdf5'
+# Assuming 'output' is the name of the folder you want to save your images in.
+output_folder = '/home/ankit/work/3D_bb_estimation/output'
+
+image_path = '/home/ankit/work/3D_bb_estimation/kitti/data_object_image_2/training/image_2/000024.png'
+yolo_weight_path = '/home/ankit/work/3D_bb_estimation/model/weights_config/yolov4.weights'
+coco_classes = '/home/ankit/work/3D_bb_estimation/model/weights_config/coco_classes.txt'
+weight_path_3d = '/home/ankit/work/3D_bb_estimation/model/weights_config/weights.hdf5'
+
+
+
 image_size = (224, 224)
 number_bin = 2
 
@@ -67,4 +75,8 @@ def predict():
         }
         predictions.append(detections)
     return predictions
-predict()
+
+
+predictions = predict()
+print(predictions)
+render_predictions(predictions, image_path, output_folder, K)
