@@ -7,6 +7,32 @@ from visualization.calibration import read_calibration_single
 from visualization.read_labels import read_labels
 from visualization.compute_box_3d import compute_box_3d
 from visualization.compute_orientation_3d import compute_orientation_3d
+from visualization.compute_translation import compute_translation
+from visualization.compute_yaw import calc_ry
+
+
+def convert_predictions(image, predictions, camera_calib):
+    objects = []
+    for prediction in predictions:
+        angle = prediction['angle_offset']
+        ry = calc_ry(image, angle, prediction, camera_calib)
+        print("ry = ", ry)
+        t = compute_translation(camera_calib, prediction, angle, ry)
+        obj = {
+                'type': prediction['type'],  # 'Car', 'Pedestrian', ...
+                'alpha': prediction['angle_offset'],  # Object observation angle ([-pi..pi])
+                'x1': prediction['x1'],  # Left
+                'y1': prediction['y1'],  # Top
+                'x2': prediction['x2'],  # Right
+                'y2': prediction['y2'],  # Bottom
+                'h': prediction['dimension'][0],   # Box width
+                'w': prediction['dimension'][1],   # Box height
+                'l': prediction['dimension'][2],  # Box length
+                't': t,  # Location (x, y, z)
+                'ry': ry  # Yaw angle
+            }
+    return objects
+
 
 def render_predictions(predictions, image_path, output_folder, calibration_path, label_dir):
     # Read the original image
@@ -14,10 +40,12 @@ def render_predictions(predictions, image_path, output_folder, calibration_path,
 
     P = read_calibration_single(calibration_path, cam=2) # cam = 2 means left color camera
 
-    print(P)
-
-    objects = read_labels(label_dir, img_idx=24)
-    # print(objects)
+    # objects = read_labels(label_dir, img_idx=24)
+    objects = convert_predictions(image, predictions, P)
+    print("Predictions")
+    print(predictions)
+    print("Objects from given labels")
+    print(objects)
 
     for object_ in objects:
         # Plot 3D bounding box
@@ -27,9 +55,9 @@ def render_predictions(predictions, image_path, output_folder, calibration_path,
         # print(orientation_2D)
 
         # Draw 3D bounding box if corners are available
+        thickness = 1
         if corners_2D.size != 0:
             color = (255, 0, 0)
-            thickness = 1
             for i in range(4):
                 # Draw lines between the base corners
                 cv2.line(image, (int(corners_2D[0, i]), int(corners_2D[1, i])),
