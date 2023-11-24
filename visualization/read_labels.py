@@ -3,12 +3,12 @@ import numpy as np
 
 def read_labels(label_dir, img_idx):
     # Get the list of files in the label directory and sort them
-    file_list = sorted(os.listdir(label_dir))
+    file_list = [f for f in sorted(os.listdir(label_dir)) if f.endswith('.txt')]
     
     # Read the label file for the specified image index
     # Adjust the index by 3 based on the sorting order
-    label_file = file_list[3 + img_idx]
-    
+    label_file = file_list[img_idx]
+    print(label_file)
     # Open the label file and parse the contents
     objects = []
     with open(os.path.join(label_dir, label_file), 'r') as file:

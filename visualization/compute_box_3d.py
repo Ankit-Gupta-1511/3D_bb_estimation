@@ -49,14 +49,3 @@ def compute_box_3d(_object, P):
 
     return corners_2D, face_idx
 
-# Example usage:
-# _object = {
-#     'ry': np.deg2rad(45),  # Rotation around the yaw axis in radians
-#     'l': 4.0,              # Length of the car
-#     'w': 1.8,              # Width of the car
-#     'h': 1.6,              # Height of the car
-#     't': [1.0, 0.5, 20.0]  # Translation vector (x, y, z) in meters
-# }
-# P = np.array([...])  # Your 3x4 projection matrix
-
-# corners_2D, face_idx = compute_box_3d(_object, P)

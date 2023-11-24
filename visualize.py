@@ -16,20 +16,20 @@ def render_predictions(predictions, image_path, output_folder, calibration_path,
 
     print(P)
 
-    objects = read_labels(label_dir, img_idx=25)
-    print(objects)
+    objects = read_labels(label_dir, img_idx=24)
+    # print(objects)
 
     for object_ in objects:
         # Plot 3D bounding box
-        corners_2D, _ = compute_box_3d(object_, P)
+        corners_2D, face_idx = compute_box_3d(object_, P)
         orientation_2D = compute_orientation_3d(object_, P)
-        print(corners_2D)
-        print(orientation_2D)
+        # print(corners_2D)
+        # print(orientation_2D)
 
         # Draw 3D bounding box if corners are available
         if corners_2D.size != 0:
             color = (255, 0, 0)
-            thickness = 2
+            thickness = 1
             for i in range(4):
                 # Draw lines between the base corners
                 cv2.line(image, (int(corners_2D[0, i]), int(corners_2D[1, i])),
@@ -42,13 +42,21 @@ def render_predictions(predictions, image_path, output_folder, calibration_path,
                 # Draw lines between the base and top corners
                 cv2.line(image, (int(corners_2D[0, i]), int(corners_2D[1, i])),
                         (int(corners_2D[0, i+4]), int(corners_2D[1, i+4])), color, thickness)
-
+                        
+            # Draw cross on the front face
+            front_face_corners = corners_2D[:, face_idx[0]]  # Get the front face corners
+            # Draw lines between opposite corners to form the cross
+            cv2.line(image, (int(front_face_corners[0, 0]), int(front_face_corners[1, 0])),
+                    (int(front_face_corners[0, 2]), int(front_face_corners[1, 2])), (0, 0, 255), thickness)
+            cv2.line(image, (int(front_face_corners[0, 1]), int(front_face_corners[1, 1])),
+                    (int(front_face_corners[0, 3]), int(front_face_corners[1, 3])), (0, 0, 255), thickness)
+                     
         # Draw orientation vector if available
         if orientation_2D.size != 0:
             cv2.line(image,
                      (int(orientation_2D[0, 0]), int(orientation_2D[1, 0])),
                      (int(orientation_2D[0, 1]), int(orientation_2D[1, 1])),
-                     (0, 255, 255), 2)
+                     (0, 255, 255), thickness)
 
     # Create the output folder if it doesn't exist
     if not os.path.exists(output_folder):
