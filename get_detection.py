@@ -15,8 +15,8 @@ yolo_weight_path = '/home/ankit/work/3D_bb_estimation/model/weights_config/yolov
 coco_classes = '/home/ankit/work/3D_bb_estimation/model/weights_config/coco_classes.txt'
 weight_path_3d = '/home/ankit/work/3D_bb_estimation/model/weights_config/weights.hdf5'
 
-
-
+calibration_path = '/home/ankit/work/3D_bb_estimation/kitti/data_object_calib/training/calib/000024.txt'
+label_dir = '/home/ankit/work/3D_bb_estimation/kitti/data_object_label_2/training/label_2'
 image_size = (224, 224)
 number_bin = 2
 
@@ -76,7 +76,6 @@ def predict():
         predictions.append(detections)
     return predictions
 
-
+# predictions = []
 predictions = predict()
-print(predictions)
-render_predictions(predictions, image_path, output_folder, K)
+render_predictions(predictions, image_path, output_folder, calibration_path, label_dir)

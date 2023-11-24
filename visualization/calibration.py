@@ -16,3 +16,15 @@ def read_calibration(calib_dir, img_idx, cam):
     
     return P
 
+
+def read_calibration_single(calib_file_path, cam):
+    # Read the content of the calibration file
+    with open(calib_file_path, 'r') as file:
+        lines = file.readlines()
+    
+    # Extract the specific camera projection matrix (P0, P1, P2, P3)
+    P_line = lines[cam].strip().split(' ')[1:]  # Skip the "P0:" part
+    P = np.array([float(value) for value in P_line]).reshape(3, 4)
+    
+    return P
+    
