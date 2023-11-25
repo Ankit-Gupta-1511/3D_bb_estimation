@@ -40,7 +40,7 @@ def compute_translation(camera_calib, object, alpha, ry):
 
     # using a different coord system
     dx = dimensions[0] / 2
-    dy = dimensions[1] / 2
+    dy = dimensions[1]
     dz = dimensions[2] / 2
 
     # below is very much based on trial and error
@@ -81,7 +81,7 @@ def compute_translation(camera_calib, object, alpha, ry):
             top_constraints.append([i*dx, -dy, j*dz])
     for i in (-1,1):
         for j in (-1,1):
-            bottom_constraints.append([i*dx, dy, j*dz])
+            bottom_constraints.append([i*dx, 0, j*dz])
 
     # now, 64 combinations
     for left in left_constraints:
@@ -92,6 +92,8 @@ def compute_translation(camera_calib, object, alpha, ry):
 
     # filter out the ones with repeats
     constraints = filter(lambda x: len(x) == len(set(tuple(i) for i in x)), constraints)
+
+    
 
     # create pre M (the term with I and the R*X)
     pre_M = np.zeros([4,4])
@@ -107,6 +109,7 @@ def compute_translation(camera_calib, object, alpha, ry):
     # constraint will be 64 sets of 4 corners
     count = 0
     for constraint in constraints:
+        
         # each corner
         Xa = constraint[0]
         Xb = constraint[1]
@@ -114,7 +117,6 @@ def compute_translation(camera_calib, object, alpha, ry):
         Xd = constraint[3]
 
         X_array = [Xa, Xb, Xc, Xd]
-
         # M: all 1's down diagonal, and upper 3x1 is Rotation_matrix * [x, y, z]
         Ma = np.copy(pre_M)
         Mb = np.copy(pre_M)
