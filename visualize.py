@@ -16,8 +16,7 @@ def convert_predictions(image, predictions, camera_calib):
     for prediction in predictions:
         angle = prediction['angle_offset']
         ry = calc_ry(image, angle, prediction, camera_calib)
-        print("ry = ", ry)
-        t = compute_translation(camera_calib, prediction, angle, ry)
+
         obj = {
                 'type': prediction['type'],  # 'Car', 'Pedestrian', ...
                 'alpha': prediction['angle_offset'],  # Object observation angle ([-pi..pi])
@@ -28,9 +27,15 @@ def convert_predictions(image, predictions, camera_calib):
                 'h': prediction['dimension'][0],   # Box width
                 'w': prediction['dimension'][1],   # Box height
                 'l': prediction['dimension'][2],  # Box length
-                't': t,  # Location (x, y, z)
+                't': [],  # Location (x, y, z)
                 'ry': ry  # Yaw angle
-            }
+        }
+
+        t = compute_translation(camera_calib, obj, angle, ry)
+        print('t = ', t)
+        obj['t'] = t
+
+        objects.append(obj)
     return objects
 
 
@@ -40,11 +45,15 @@ def render_predictions(predictions, image_path, output_folder, calibration_path,
 
     P = read_calibration_single(calibration_path, cam=2) # cam = 2 means left color camera
 
-    # objects = read_labels(label_dir, img_idx=24)
+    lable_objects = read_labels(label_dir, img_idx=24)
+    label_translation = compute_translation(P, lable_objects[0], lable_objects[0]['alpha'], lable_objects[0]['ry'])
+    print("label translation, ", label_translation)
     objects = convert_predictions(image, predictions, P)
     print("Predictions")
     print(predictions)
     print("Objects from given labels")
+    print(lable_objects)
+    print("computed objects")
     print(objects)
 
     for object_ in objects:
