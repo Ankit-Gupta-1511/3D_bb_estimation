@@ -71,7 +71,8 @@ def predict(image_path):
             "x2": int(row["x2"]),
             "y2": int(row["y2"]),
             "dimension": dimension,
-            "angle_offset": angle_offset
+            "angle_offset": angle_offset,
+            "type": row["class_name"]
         }
         predictions.append(detections)
     return predictions
@@ -79,15 +80,14 @@ def predict(image_path):
 # Load image & run testing
 all_image = [f for f in sorted(os.listdir(image_folder)) if f.endswith('.png')]
 calibration_paths = [f for f in sorted(os.listdir(calibration_folder)) if f.endswith('.txt')]
-label_paths = [f for f in sorted(os.listdir(label_folder)) if f.endswith('.txt')]
+# label_paths = [f for f in sorted(os.listdir(label_folder)) if f.endswith('.txt')]
 
 
 for image_idx, f in enumerate(all_image):
     image_file = image_folder +'/' + f
     calibration_path = calibration_folder + '/' + calibration_paths[image_idx]
-    label_path = label_folder + '/' + label_paths[image_idx]
+    # label_path = label_folder + '/' + label_paths[image_idx]
     print(image_file)
     print(calibration_path)
-    print(label_path)
     predictions = predict(image_file)
-    render_predictions(predictions, image_file, output_folder, calibration_path, label_path, image_idx)
+    render_predictions(predictions, image_file, output_folder, calibration_path, '')

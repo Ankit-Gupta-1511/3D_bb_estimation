@@ -45,18 +45,8 @@ def render_predictions(predictions, image_path, output_folder, calibration_path,
 
     P = read_calibration_single(calibration_path, cam=2) # cam = 2 means left color camera
 
-    lable_objects = read_labels(label_dir, img_idx=24)
-    label_translation = compute_translation(P, lable_objects[0], lable_objects[0]['alpha'], lable_objects[0]['ry'])
-    # print("label translation, ", label_translation)
-    label_ry = calc_ry(image, lable_objects[0]['alpha'], lable_objects[0], P)
-    print("label ry, ", label_ry)
     objects = convert_predictions(image, predictions, P)
-    # print("Predictions")
-    # print(predictions)
-    print("Objects from given labels")
-    print(lable_objects)
-    print("computed objects")
-    print(objects)
+    
 
     for object_ in objects:
         # Plot 3D bounding box
@@ -102,7 +92,7 @@ def render_predictions(predictions, image_path, output_folder, calibration_path,
         os.makedirs(output_folder)
 
     # Save the image with drawn 3D bounding boxes
-    output_file_path = os.path.join(output_folder, 'output_image.png')
+    output_file_path = os.path.join(output_folder, image_path.split('/')[-1])
     cv2.imwrite(output_file_path, image)
 
     print(f"Image saved to {output_file_path}")
