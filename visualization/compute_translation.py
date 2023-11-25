@@ -1,69 +1,7 @@
 import numpy as np
 from scipy.linalg import svd
+
 # Reference - https://cs.gmu.edu/~amousavi/papers/3D-Deepbox-Supplementary.pdf
-
-def box3d_candidate(object, angle, soft_range):
-    x_corners = [object['l'], object['l'], object['l'], object['l'], 0, 0, 0, 0]
-    y_corners = [object['h'], 0, object['h'], 0, object['h'], 0, object['h'], 0]
-    z_corners = [0, 0, object['w'], object['w'], object['w'], object['w'], 0, 0]
-
-    x_corners = [i - object['l'] / 2 for i in x_corners]
-    y_corners = [i - object['h'] for i in y_corners]
-    z_corners = [i - object['w'] / 2 for i in z_corners]
-
-    corners_3d = np.transpose(np.array([x_corners, y_corners, z_corners]))
-    point1 = corners_3d[0, :]
-    point2 = corners_3d[1, :]
-    point3 = corners_3d[2, :]
-    point4 = corners_3d[3, :]
-    point5 = corners_3d[6, :]
-    point6 = corners_3d[7, :]
-    point7 = corners_3d[4, :]
-    point8 = corners_3d[5, :]
-
-    # set up projection relation based on local orientation
-    xmin_candi = xmax_candi = ymin_candi = ymax_candi = 0
-
-    if 0 < angle < np.pi / 2:
-        xmin_candi = point8
-        xmax_candi = point2
-        ymin_candi = point2
-        ymax_candi = point5
-
-    if np.pi / 2 <= angle <= np.pi:
-        xmin_candi = point6
-        xmax_candi = point4
-        ymin_candi = point4
-        ymax_candi = point1
-
-    if np.pi < angle <= 3 / 2 * np.pi:
-        xmin_candi = point2
-        xmax_candi = point8
-        ymin_candi = point8
-        ymax_candi = point1
-
-    if 3 * np.pi / 2 <= angle <= 2 * np.pi:
-        xmin_candi = point4
-        xmax_candi = point6
-        ymin_candi = point6
-        ymax_candi = point5
-
-    # soft constraint
-    div = soft_range * np.pi / 180
-    if 0 < angle < div or 2*np.pi-div < angle < 2*np.pi:
-        xmin_candi = point8
-        xmax_candi = point6
-        ymin_candi = point6
-        ymax_candi = point5
-
-    if np.pi - div < angle < np.pi + div:
-        xmin_candi = point2
-        xmax_candi = point4
-        ymin_candi = point8
-        ymax_candi = point1
-
-    return xmin_candi, xmax_candi, ymin_candi, ymax_candi
-
 
 def compute_translation(camera_calib, object, alpha, ry):
     # Extract the 2D bounding box coordinates and the 3D dimensions from the object dictionary
