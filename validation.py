@@ -20,15 +20,20 @@ label_folder = '/home/ankit/work/3D_bb_estimation/kitti/data_object_label_2/test
 image_size = (224, 224)
 number_bin = 2
 
+
+# load yolo model and get 2d detection
+model = Yolov4(weight_path=yolo_weight_path, class_name_path=coco_classes)
+
+
+# load 3d bb estimation model
+estimation_model_3d = lib.build_model()
+estimation_model_3d.load_weights(weight_path_3d)
+
+
 def predict(image_path):
-    # load yolo model and get 2d detection
-    model = Yolov4(weight_path=yolo_weight_path, class_name_path=coco_classes)
+    
     detection_2d = model.predict(image_path)
-
-    # load 3d bb estimation model
-    estimation_model_3d = lib.build_model()
-    estimation_model_3d.load_weights(weight_path_3d)
-
+    
     # read image
     image_array = cv2.imread(image_path)
 
