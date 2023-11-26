@@ -8,24 +8,23 @@ import os
 from visualize import render_predictions
 
 # Assuming 'output' is the name of the folder you want to save your images in.
-output_folder = '/home/ankit/work/3D_bb_estimation/output'
+output_folder = '/home/ankit/work/3D_bb_estimation/validation'
 
-image_path = '/home/ankit/work/3D_bb_estimation/kitti/data_object_image_2/training/image_2/000024.png'
+image_folder = '/home/ankit/work/3D_bb_estimation/kitti/data_object_image_2/testing/image_2'
 yolo_weight_path = '/home/ankit/work/3D_bb_estimation/model/weights_config/yolov4.weights'
 coco_classes = '/home/ankit/work/3D_bb_estimation/model/weights_config/coco_classes.txt'
 weight_path_3d = '/home/ankit/work/3D_bb_estimation/model/weights_config/weights.hdf5'
 
-calibration_path = '/home/ankit/work/3D_bb_estimation/kitti/data_object_calib/training/calib/000024.txt'
-label_dir = '/home/ankit/work/3D_bb_estimation/kitti/data_object_label_2/training/label_2'
+calibration_folder = '/home/ankit/work/3D_bb_estimation/kitti/data_object_calib/testing/calib'
+label_folder = '/home/ankit/work/3D_bb_estimation/kitti/data_object_label_2/testing/label_2'
 image_size = (224, 224)
 number_bin = 2
 
-def predict():
+def predict(image_path):
     # load yolo model and get 2d detection
     model = Yolov4(weight_path=yolo_weight_path, class_name_path=coco_classes)
     detection_2d = model.predict(image_path)
 
-    print(detection_2d)
     # load 3d bb estimation model
     estimation_model_3d = lib.build_model()
     estimation_model_3d.load_weights(weight_path_3d)
@@ -78,6 +77,17 @@ def predict():
         predictions.append(detections)
     return predictions
 
-# predictions = []
-predictions = predict()
-render_predictions(predictions, image_path, output_folder, calibration_path, label_dir)
+# Load image & run testing
+all_image = [f for f in sorted(os.listdir(image_folder)) if f.endswith('.png')]
+calibration_paths = [f for f in sorted(os.listdir(calibration_folder)) if f.endswith('.txt')]
+# label_paths = [f for f in sorted(os.listdir(label_folder)) if f.endswith('.txt')]
+
+
+for image_idx, f in enumerate(all_image):
+    image_file = image_folder +'/' + f
+    calibration_path = calibration_folder + '/' + calibration_paths[image_idx]
+    # label_path = label_folder + '/' + label_paths[image_idx]
+    print(image_file)
+    print(calibration_path)
+    predictions = predict(image_file)
+    render_predictions(predictions, image_file, output_folder, calibration_path, '')
