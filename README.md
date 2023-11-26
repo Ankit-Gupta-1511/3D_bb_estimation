@@ -13,6 +13,11 @@
 - Use `pip install -r requirements.txt` to install the packages
 - run prediction.sh it will return all detections
 
+## Implementation
+- data_prep.ipynb to prepare dataset for Muttibin regressor
+- train_3dbb_regressor.ipynb to train and save the model
+- get_detection.py first predict 2D bounding boxes using pretrained yolo model given in refrence, predict dimesion and orintation using Muttibin regressor and render_predictions to estimate full 3D bounding box.
+
 
 # References
 + https://arxiv.org/pdf/1612.00496.pdf

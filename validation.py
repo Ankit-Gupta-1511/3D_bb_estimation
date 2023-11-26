@@ -8,15 +8,15 @@ import os
 from visualize import render_predictions
 
 # Assuming 'output' is the name of the folder you want to save your images in.
-output_folder = '/home/ankit/work/3D_bb_estimation/validation'
+output_folder = './3D_bb_estimation/validation'
 
-image_folder = '/home/ankit/work/3D_bb_estimation/kitti/data_object_image_2/testing/image_2'
-yolo_weight_path = '/home/ankit/work/3D_bb_estimation/model/weights_config/yolov4.weights'
-coco_classes = '/home/ankit/work/3D_bb_estimation/model/weights_config/coco_classes.txt'
-weight_path_3d = '/home/ankit/work/3D_bb_estimation/model/weights_config/weights.hdf5'
+image_folder = './3D_bb_estimation/kitti/data_object_image_2/testing/image_2'
+yolo_weight_path = './3D_bb_estimation/model/weights_config/yolov4.weights'
+coco_classes = './3D_bb_estimation/model/weights_config/coco_classes.txt'
+weight_path_3d = './3D_bb_estimation/model/weights_config/weights.hdf5'
 
-calibration_folder = '/home/ankit/work/3D_bb_estimation/kitti/data_object_calib/testing/calib'
-label_folder = '/home/ankit/work/3D_bb_estimation/kitti/data_object_label_2/testing/label_2'
+calibration_folder = './3D_bb_estimation/kitti/data_object_calib/testing/calib'
+label_folder = './3D_bb_estimation/kitti/data_object_label_2/testing/label_2'
 image_size = (224, 224)
 number_bin = 2
 
