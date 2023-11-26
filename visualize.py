@@ -97,3 +97,25 @@ def render_predictions(predictions, image_path, output_folder, calibration_path,
 
     print(f"Image saved to {output_file_path}")
 
+    output_value_path = os.path.join(output_folder, image_path.split('/')[-1].replace('.png', '.txt'))
+    with open(output_value_path, 'w') as file:
+        for obj in objects:
+            # Join the object values into a single line separated by spaces
+            line = ' '.join([
+                obj['type'],
+                str(obj['alpha']),
+                str(obj['x1']),
+                str(obj['y1']),
+                str(obj['x2']),
+                str(obj['y2']),
+                str(obj['h']),
+                str(obj['w']),
+                str(obj['l']),
+                ' '.join(map(str, obj['t'])),  # Assuming 't' is a list or similar iterable
+                str(obj['ry'])
+            ])
+            # Write the line to the file and add a newline character to separate objects
+            file.write(line + '\n')
+    
+    print(f"Values saved to {output_value_path}")
+
